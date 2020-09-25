@@ -19,6 +19,19 @@ accumulator.model <- function(samples, rate.1=0.025, rate.2=0.025, criterion=3){
   rt.array <- rep(0, samples)
   
   # fill in code here!
+  for(i in 1:samples){
+    accumulator.1 <- 0
+    accumulator.2 <- 0
+    steps <- 0
+    while(accumulator.1 < criterion && accumulator.2 < criterion){
+      accumulator.1 <- accumulator.1 + rexp(1, 1/rate.1)
+      accumulator.2 <- accumulator.2 + rexp(1, 1/rate.2)
+      steps <- steps + 1
+    }
+    accuracy.array[i] <- accumulator.1 > accumulator.2
+    rt.array[i] <- steps
+  }
+    
 
   output <- data.frame(
     correct = accuracy.array,

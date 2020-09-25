@@ -15,7 +15,22 @@ random.walk.model <- function(samples, drift=0, sd=0.3, criterion=3){
   accuracy.array <- rep(F, samples)
   rt.array <- rep(0, samples)
   
-  # fill in code here!
+  # for every sample that we want to draw
+  for(i in 1:samples){
+    # create the accumulator at the starting point 
+    accumulator <- 0
+    steps <- 0
+    while(abs(accumulator) < criterion){
+      # sample some evidence with mean = drift rate, and standard deviation = sd
+      evidence <- rnorm(1, mean=drift, sd=sd)
+      accumulator <- accumulator + evidence
+      steps <- steps + 1
+    }
+    
+    # we've hit the boundary!
+    rt.array[i] <- steps
+    accuracy.array[i] <- accumulator > 0
+  }
   
   output <- data.frame(
     correct = accuracy.array,
@@ -31,7 +46,7 @@ random.walk.model <- function(samples, drift=0, sd=0.3, criterion=3){
 # 1000 samples and about half of the samples should be correct. the average rt will probably
 # be around 112, but might vary from that by a bit.
 
-initial.test <- random.walk.model(1000)
+initial.test <- random.walk.model(1000, drift=0.03)
 sum(initial.test$correct) / length(initial.test$correct) # should be close to 0.5
 mean(initial.test$rt) # should be about 112
 
